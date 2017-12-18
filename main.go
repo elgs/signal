@@ -16,6 +16,7 @@ import (
 var hubs = make(map[string]*Hub)
 
 var addr = flag.String("addr", ":8080", "http service address, default to :8080")
+var addrs = flag.String("addrs", ":8443", "http service address, default to :8443")
 
 func main() {
 	sigs := make(chan os.Signal, 1)
@@ -102,9 +103,24 @@ func main() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
+
+	srvs := &http.Server{
+		Handler:      r,
+		Addr:         *addrs,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
 	go func() {
 		log.Fatal(srv.ListenAndServe())
-		log.Println("started!")
+		log.Println(*addr, "started!")
+	}()
+
+	go func() {
+		log.Fatal(srvs.ListenAndServeTLS(
+			"/root/certs/star.netdata.io/star.netdata.io.all.crt",
+			"/root/certs/star.netdata.io/star.netdata.io.key"))
+		log.Println(*addrs, "started!")
 	}()
 
 	<-done
