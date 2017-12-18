@@ -118,7 +118,6 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	id := uuid.NewV4().String()
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: id}
 	client.hub.register <- client
-	log.Printf("Client %v registered to hub %v", id, hub.id)
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the
@@ -37,10 +38,13 @@ func (h *Hub) run() {
 		case client := <-h.register:
 			h.clients[client] = true
 			client.send <- []byte(fmt.Sprintf(`{"type":"id", "id":"%v"}`, client.id))
+			log.Printf("Client %v registered to hub %v", client.id, h.id)
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
 				close(client.send)
+				log.Printf("Client %v unregistered from hub %v", client.id, h.id)
+				go func() { h.broadcast <- []byte(fmt.Sprintf(`{"type":"leave", "data":"%v"}`, client.id)) }()
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
