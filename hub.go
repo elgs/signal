@@ -44,7 +44,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 				log.Printf("Client %v unregistered from hub %v", client.id, h.id)
-				go func() { h.broadcast <- []byte(fmt.Sprintf(`{"type":"leave", "data":"%v"}`, client.id)) }()
+				go func() { h.broadcast <- []byte(fmt.Sprintf(`{"type":"leave", "from":"%v"}`, client.id)) }()
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
