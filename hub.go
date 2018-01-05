@@ -33,6 +33,10 @@ func newHub() *Hub {
 }
 
 func (h *Hub) run() {
+	defer func() {
+		delete(hubs, h.id)
+		log.Printf("Hub %v closed", h.id)
+	}()
 	for {
 		select {
 		case client := <-h.register:
@@ -45,6 +49,9 @@ func (h *Hub) run() {
 				close(client.send)
 				log.Printf("Client %v unregistered from hub %v", client.id, h.id)
 				go func() { h.broadcast <- []byte(fmt.Sprintf(`{"type":"leave", "from":"%v"}`, client.id)) }()
+				if len(h.clients) == 0 {
+					break
+				}
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
