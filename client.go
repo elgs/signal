@@ -115,7 +115,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	id := uuid.NewV4().String()
+	id := uuid.Must(uuid.NewV4()).String()
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: id}
 	client.hub.register <- client
 
