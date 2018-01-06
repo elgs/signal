@@ -17,8 +17,8 @@ var hubs = make(map[string]*Hub)
 
 var addr = flag.String("addr", ":8080", "http service address, defaults to :8080")
 var addrs = flag.String("addrs", ":8443", "http service address, defaults to :8443")
-var cert = flag.String("cert", ":8443", "certificate file path, defaults to crt.crt")
-var key = flag.String("key", ":8443", "key file path, defaults to key.key")
+var cert = flag.String("cert", "crt.crt", "certificate file path, defaults to crt.crt")
+var key = flag.String("key", "key.key", "key file path, defaults to key.key")
 
 func main() {
 	sigs := make(chan os.Signal, 1)
