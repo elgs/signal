@@ -51,6 +51,7 @@ func (h *Hub) run() {
 				log.Printf("Client %v unregistered from hub %v", client.id, h.id)
 				go func() { h.broadcast <- []byte(fmt.Sprintf(`{"type":"leave", "from":"%v"}`, client.id)) }()
 				if len(h.clients) == 0 {
+					log.Printf("Hug %v is closing", h.id)
 					break
 				}
 			}
